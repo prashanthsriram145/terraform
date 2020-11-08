@@ -45,12 +45,24 @@ terraform {
 }
 */
 
+/*
 terraform {
   backend "s3" {
     key = "global/s3/terraform.tfstate"
   }
 }
+*/
 
+terraform {
+  backend "s3" {
+    bucket = "terraform-up-and-running-spk-145"
+    key = "workspaces-example/terraform.tfstate"
+    region = "us-east-1"
+
+    dynamodb_table = "terraform-up-and-running-locks"
+    encrypt = true
+  }
+}
 output "s3_bucket_arn" {
   value = aws_s3_bucket.terraform-s3-bucket.arn
 }
