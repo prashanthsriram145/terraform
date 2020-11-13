@@ -10,6 +10,8 @@ resource "aws_instance" "my-first-instance" {
   user_data = <<-EOF
               !#/bin/bash
               echo "Hello World!" >> index.html
+              ${data.terraform_remote_state.db.outputs.address} >> index.html
+              ${data.terraform_remote_state.db.outputs.port} >> index.html
               nohup busybox httpd -f -p ${var.server_port} &
               EOF
 
@@ -150,3 +152,12 @@ resource "aws_lb_listener_rule" "terraform-listener-rule" {
   }
 }
 
+data "terraform_remote_state" "db" {
+  backend = "s3"
+
+  config = {
+    bucket = "terraform-up-and-running-spk-145"
+    key = "stage/data-stores/terraform.tfstate"
+    region = "us-east-1"
+  }
+}
